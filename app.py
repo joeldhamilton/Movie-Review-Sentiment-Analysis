@@ -2,16 +2,20 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import torch
-from transformers import BertTokenizer, BertModel
+from transformers.models.bert import BertTokenizer, BertModel
 import joblib
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 import re
+import os
 
-# Download required NLTK data
-nltk.download('punkt')
-nltk.download('stopwords')
+# Pre-download NLTK data to avoid runtime downloads
+nltk_data_path = os.path.join(os.path.expanduser("~"), "nltk_data")
+if not os.path.exists(os.path.join(nltk_data_path, "tokenizers/punkt")):
+    nltk.download('punkt', quiet=True)
+if not os.path.exists(os.path.join(nltk_data_path, "corpora/stopwords")):
+    nltk.download('stopwords', quiet=True)
 
 # Streamlit page configuration
 st.set_page_config(page_title="Sentiment Analysis App", page_icon="🎬", layout="centered")
@@ -62,7 +66,11 @@ def BERT_text_to_embeddings(texts, max_length=512, disable_progress_bar=False):
 def load_logistic_model():
     return joblib.load('model_9_logistic_regression.joblib')
 
-model_9 = load_logistic_model()
+try:
+    model_9 = load_logistic_model()
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    st.stop()
 
 # Text input for user
 user_input = st.text_area("Enter your movie review:", 
