@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import torch
-from transformers.models.bert import BertTokenizer, BertModel
+from transformers import BertTokenizer, BertModel
 import joblib
 import nltk
 from nltk.corpus import stopwords
